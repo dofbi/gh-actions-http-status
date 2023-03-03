@@ -10,7 +10,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v1
       - name: Check HTTP status of production site
+        id: http_status
         uses: ./
         with:
-          sites: '["http://github.com", "https://education.github.com"]'
-          expected: '[301, 200]'
+          sites: '["http://github.com", "https://education.github.com","https://www.jammgen3mandats.org"]'
+          expected: '[301, 200, 200]'
+      
+      - name: Print failed sites
+        if: failure()
+        run: echo "${{ steps.http_status.outputs.failed_sites }}"

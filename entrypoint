@@ -22,9 +22,9 @@ http_status() {
         result=${text_failed}
         final_result=${text_failed}
         final_result_code=127
-    
+        failed_sites+="${site_url} "
     fi
-    
+
     echo -e "${result} HTTP Status for ${site_url} is ${actual_status}, expected ${expected_status}"
 }
 
@@ -32,6 +32,7 @@ echo -e "\n\n==Starting gh-actions HTTP Status==\n"
 
 final_result="${LGREEN}Success${NC}"
 final_result_code=0
+failed_sites=""
 
 len=$(printenv INPUT_SITES | jq -r '. | length')
 
@@ -44,5 +45,13 @@ done
 
 echo -e "\nHTTP Status result: ${final_result}"
 echo -e "\n==END==\n\n"
+
+# Output the failed sites, if any
+if [ "$failed_sites" != "" ]; then
+    echo -e "\nFailed sites: $failed_sites"
+fi
+
+# Set the output variable for the failed sites
+echo "failed_sites=$failed_sites" >> $GITHUB_OUTPUT
 
 exit ${final_result_code}
